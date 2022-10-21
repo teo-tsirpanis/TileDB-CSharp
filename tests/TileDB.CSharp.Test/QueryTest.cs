@@ -1,11 +1,25 @@
 using System;
 using System.IO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Threading.Tasks;
+
 namespace TileDB.CSharp.Test
 {
     [TestClass]
     public class QueryTest
     {
+        private static ValueTask SubmitAsync(Query query, bool isAsync)
+        {
+            if (isAsync)
+            {
+                return query.SubmitAsync();
+            }
+            else
+            {
+                query.Submit();
+                return ValueTask.CompletedTask;
+            }
+        }
 
         [DataRow(LayoutType.GlobalOrder, ArrayType.Sparse)]
         [DataRow(LayoutType.GlobalOrder, ArrayType.Dense)]
@@ -116,8 +130,10 @@ namespace TileDB.CSharp.Test
             CollectionAssert.AreEqual(rowsExpected, rowsRead);
         }
 
-        [TestMethod]
-        public void TestDenseQuery()
+        [DataTestMethod]
+        [DataRow(false, DisplayName = "Synchronous")]
+        [DataRow(true, DisplayName = "Asynchronous")]
+        public async Task TestQuery(bool isAsync)
         {
             var context = Context.GetDefault();
             Assert.IsNotNull(context);
@@ -182,7 +198,7 @@ namespace TileDB.CSharp.Test
 
             query.SetOffsetsBuffer("a2", a2_offset_buffer);
 
-            query.Submit();
+            await SubmitAsync(query, isAsync);
 
             var status = query.Status();
 
@@ -216,7 +232,7 @@ namespace TileDB.CSharp.Test
 
             query_read.SetOffsetsBuffer("a2", a2_offset_buffer_read);
 
-            query_read.Submit();
+            await SubmitAsync(query_read, isAsync);
             var status_read = query_read.Status();
 
             Assert.AreEqual(QueryStatus.Completed, status_read);
@@ -232,8 +248,10 @@ namespace TileDB.CSharp.Test
             CollectionAssert.AreEqual(a2_offset_buffer, a2_offset_buffer_read);
         }
 
-        [TestMethod]
-        public void TestSimpleSparseArrayQuery()
+        [DataTestMethod]
+        [DataRow(false, DisplayName = "Synchronous")]
+        [DataRow(true, DisplayName = "Asynchronous")]
+        public async Task TestSimpleSparseArrayQuery(bool isAsync)
         {
             var context = Context.GetDefault();
             Assert.IsNotNull(context);
@@ -295,7 +313,7 @@ namespace TileDB.CSharp.Test
                 query_write.SetDataBuffer("cols", dim2_data_buffer);
                 query_write.SetDataBuffer("a", attr_data_buffer);
 
-                query_write.Submit();
+                await SubmitAsync(query_write, isAsync);
 
                 var status = query_write.Status();
 
@@ -326,7 +344,7 @@ namespace TileDB.CSharp.Test
 
                 query_read.SetDataBuffer("a", attr_data_buffer_read);
 
-                query_read.Submit();
+                await SubmitAsync(query_read, isAsync);
                 var status_read = query_read.Status();
 
                 Assert.AreEqual(QueryStatus.Completed, status_read);
@@ -342,8 +360,10 @@ namespace TileDB.CSharp.Test
             CollectionAssert.AreEqual(attr_data_buffer, attr_data_buffer_read);
         }
 
-        [TestMethod]
-        public void TestNullableAttributeArrayQuery()
+        [DataTestMethod]
+        [DataRow(false, DisplayName = "Synchronous")]
+        [DataRow(true, DisplayName = "Asynchronous")]
+        public async Task TestNullableAttributeArrayQuery(bool isAsync) 
         {
             var context = Context.GetDefault();
             Assert.IsNotNull(context);
@@ -441,7 +461,7 @@ namespace TileDB.CSharp.Test
                 query_write.SetOffsetsBuffer("a3", a3_off);
                 query_write.SetValidityBuffer("a3", a3_validity);
 
-                query_write.Submit();
+                await SubmitAsync(query_write, isAsync);
 
                 var status = query_write.Status();
 
@@ -487,7 +507,7 @@ namespace TileDB.CSharp.Test
                 query_read.SetOffsetsBuffer("a3", a3_off_read);
                 query_read.SetValidityBuffer("a3", a3_validity_read);
 
-                query_read.Submit();
+                await SubmitAsync(query_read, isAsync);
                 var status_read = query_read.Status();
 
                 Assert.AreEqual(QueryStatus.Completed, status_read);
@@ -505,10 +525,12 @@ namespace TileDB.CSharp.Test
             CollectionAssert.AreEqual(a3_data, a3_data_read);
             CollectionAssert.AreEqual(a3_validity, a3_validity_read);
             CollectionAssert.AreEqual(a3_off, a3_off_read);
-        }// public void TestNullableAttributeArrayQuery
+        }
 
-        [TestMethod]
-        public void TestBoolAttributeArrayQuery()
+        [DataTestMethod]
+        [DataRow(false, DisplayName = "Synchronous")]
+        [DataRow(true, DisplayName = "Asynchronous")]
+        public async Task TestBoolAttributeArrayQuery(bool isAsync)
         {
             // Create array
             var context = Context.GetDefault();
@@ -545,7 +567,7 @@ namespace TileDB.CSharp.Test
             var a1_data = new bool[] { false, true, true, false };
             query_write.SetDataBuffer("a1", a1_data);
 
-            query_write.Submit();
+            await SubmitAsync(query_write, isAsync);
             var status = query_write.Status();
             Assert.AreEqual(status, QueryStatus.Completed);
             query_write.FinalizeQuery();
@@ -578,7 +600,7 @@ namespace TileDB.CSharp.Test
             var a1_data_read_bytes = new byte[4];
             query_read.SetDataBuffer("a1", a1_data_read_bytes);
 
-            query_read.Submit();
+            await SubmitAsync(query_read, isAsync);
             status = query_read.Status();
             Assert.AreEqual(status, QueryStatus.Completed);
             CollectionAssert.AreEqual(a1_data, System.Array.ConvertAll(a1_data_read_bytes, b => b == 1));
