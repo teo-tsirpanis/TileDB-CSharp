@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace TileDB.CSharp.Examples
 {
@@ -29,7 +30,7 @@ namespace TileDB.CSharp.Examples
             Array.Create(Ctx, ArrayPath, schema);
         }
 
-        private static void WriteArray()
+        private static async Task WriteArrayAsync()
         {
             // Produce columns iteratively
             List<int> colsList = new();
@@ -56,21 +57,21 @@ namespace TileDB.CSharp.Examples
                 queryWrite.SetDataBuffer("rows", rowsData);
                 queryWrite.SetDataBuffer("cols", colsData);
                 queryWrite.SetDataBuffer("a1", attrData);
-                queryWrite.Submit();
+                await queryWrite.SubmitAsync();
 
                 Console.WriteLine($"Write query status: {queryWrite.Status()}");
                 arrayWrite.Close();
             }
         }
 
-        private static void ReadArray()
+        static void ReadArray()
         {
             // Allocate buffers for 10 values per batch read
             var rowsRead = new int[10];
             var colsRead = new int[10];
             var attrRead = new int[10];
 
-            using (var arrayRead = new Array(Ctx, ArrayPath))
+            using (var arrayRead = new Array(ctx, arrayName))
             {
                 arrayRead.Open(QueryType.Read);
                 var queryRead = new Query(Ctx, arrayRead);
@@ -84,7 +85,7 @@ namespace TileDB.CSharp.Examples
                 int batchNum = 1;
                 do
                 {
-                    queryRead.Submit();
+                    await queryRead.SubmitAsync();
 
                     // Zip (row, col) together for pretty printing
                     var coordList =
@@ -103,16 +104,16 @@ namespace TileDB.CSharp.Examples
             }
         }
 
-        public static void Run()
+        public static async Task RunAsync()
         {
-             if (Directory.Exists(ArrayPath))
+             if (Directory.Exists(arrayName))
              {
-                 Directory.Delete(ArrayPath, true);
+                 Directory.Delete(arrayName, true);
              }
 
-             CreateArray();
-             WriteArray();
-             ReadArray();
+            CreateArray();
+            await WriteArrayAsync();
+            await ReadArrayAsync();
         }
     }
 }
