@@ -54,7 +54,7 @@ tiledb.pc
 
 .DS_Store
 include
-scripts/nuget/temp
+temp
 *.binlog
 *.nupkg
 packages
