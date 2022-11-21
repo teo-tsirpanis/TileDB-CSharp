@@ -12,13 +12,15 @@ tiledb/api/c_api/api_external_common.h
 tiledb/api/c_api/config/config_api_external.h
 tiledb/api/c_api/context/context_api_external.h
 tiledb/api/c_api/error/error_api_external.h
+tiledb/api/c_api/filesystem/filesystem_api_external.h
 tiledb/api/c_api/filter/filter_api_external.h
+tiledb/api/c_api/filter_list/filter_list_api_external.h
 tiledb/tiledb_experimental.h
 tiledb/tiledb.h
 --output
 sources/TileDB.CSharp/Interop
 --headerFile
-./scripts/generate/header.txt
+./scripts/generate-bindings/header.txt
 --exclude
 tiledb_attribute_dump
 tiledb_domain_dump
@@ -30,6 +32,10 @@ tiledb_fragment_info_dump
 tiledb_status
 --remap
 tiledb_experimental_query_status_details_t=tiledb_query_status_details_t
+tiledb_config_handle_t=tiledb_config_t
+tiledb_config_iter_handle_t=tiledb_config_iter_t
 tiledb_ctx_handle_t=tiledb_ctx_t
+tiledb_error_handle_t=tiledb_error_t
 tiledb_filter_handle_t=tiledb_filter_t
+tiledb_filter_list_handle_t=tiledb_filter_list_t
 -ltiledb
