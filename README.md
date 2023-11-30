@@ -2,28 +2,20 @@
 [![NuGet](https://img.shields.io/nuget/v/TileDB.CSharp.svg)](https://nuget.org/packages/TileDB.CSharp)
 [![Test](https://github.com/TileDB-Inc/TileDB-CSharp/actions/workflows/tiledb-csharp.yml/badge.svg?branch=main&event=push)](https://github.com/TileDB-Inc/TileDB-CSharp/actions/workflows/tiledb-csharp.yml)
 
-# TileDB-CSharp
+# TileDB Experimental C# API — Level 1
 
-This repository contains the official C# bindings of the [TileDB Embedded](https://tiledb.com/products/tiledb-embedded) storage engine. See more information in [the README of the library project](sources/TileDB.CSharp/README.md).
+This branch contains the design for the next generation of the TileDB C# API.
 
-## Install
+> [!IMPORTANT]
+> This API is a work in progress and it is not guaranteed to be actually shipped.
 
-The library is available on [NuGet](https://nuget.org/packages/TileDB.CSharp).
+## Goals
 
-## Build
-
-```bash
-cd sources/TileDB.CSharp
-dotnet build -c Release
-```
-
-## Test
-
-```bash
-cd tests/TileDB.CSharp.Test
-dotnet test -c Release
-```
-
-## Old version
-
-The SWIG-based 2.x version of this codebase is available in the [`archive`](https://github.com/TileDB-Inc/TileDB-CSharp/tree/archive) branch.
+* Provide the best possible way to use TileDB Embedded from C#. The best possible means:
+    * Follows .NET conventions and idioms.
+    * Is easy to use and understand.
+    * Is efficient.
+    * Is safe.
+    * Its features are discoverable.
+    * Hides the complexity of the underlying C API.
+* Require few if any changes to the TileDB C API.
