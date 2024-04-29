@@ -65,7 +65,6 @@ jobs:
 
       - name: Run examples (.NET 5)
         shell: bash
-        # macos-latest runs on Apple Silicon, which .NET 5 does not support.
         # The tests run fine for some reason, but the examples do not. Explicitly
         # specify the architecture to avoid this issue.
         run: |
