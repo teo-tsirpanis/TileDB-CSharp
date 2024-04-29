@@ -150,7 +150,9 @@ jobs:
 
       - name: Run examples (.NET 6)
         shell: bash
-        run: find examples/ -name *.csproj | xargs -I{} dotnet run --project {} -f net6.0
+        # .NET sometimes builds the .NET 5 binaries too, which fails on macos-latest.
+        # Explicitly block any multi-targeting.
+        run: find examples/ -name *.csproj | xargs -I{} dotnet run --project {} -f net6.0 -p:TargetFrameworks=net6.0
 
   Create-Issue:
     needs: Test-NuGet
