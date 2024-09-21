@@ -103,6 +103,19 @@ public sealed unsafe class ArraySchemaEvolution : IDisposable
     }
 
     /// <summary>
+    /// Expands the current domain of the <see cref="ArraySchemaEvolution"/>.
+    /// </summary>
+    /// <param name="currentDomain">A new <see cref="CurrentDomain"/>.</param>
+    /// <seealso cref="ArraySchema.SetCurrentDomain"/>
+    public void ExpandCurrentDomain(CurrentDomain currentDomain)
+    {
+        using var ctxHandle = _ctx.Handle.Acquire();
+        using var handle = _handle.Acquire();
+        using var currentDomainHandle = currentDomain.Handle.Acquire();
+        _ctx.handle_error(Methods.tiledb_array_schema_evolution_expand_current_domain(ctxHandle, handle, currentDomainHandle));
+    }
+
+    /// <summary>
     /// Drops an <see cref="Attribute"/> from the <see cref="ArraySchemaEvolution"/>.
     /// </summary>
     /// <param name="attr">The <see cref="Attribute"/> whose name will be dropped from the schema.</param>

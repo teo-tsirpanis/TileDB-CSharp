@@ -178,6 +178,7 @@ public sealed unsafe class Config : IDisposable, IEnumerable<KeyValuePair<string
     /// Gets a <see cref="ConfigIterator"/> that enumerates over all options whose parameter namess start with a given prefix.
     /// </summary>
     /// <param name="prefix">The parameters' name's prefix.</param>
+    [Obsolete(Obsoletions.ConfigIteratorMessage, DiagnosticId = Obsoletions.ConfigIteratorDiagId, UrlFormat = Obsoletions.SharedUrlFormat)]
     public ConfigIterator Iterate(string prefix)
     {
         return new ConfigIterator(_handle, prefix);

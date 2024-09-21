@@ -124,6 +124,19 @@ public sealed unsafe class ArraySchema : IDisposable
     }
 
     /// <summary>
+    /// Sets the <see cref="ArraySchema"/>'s <see cref="CSharp.CurrentDomain"/>.
+    /// </summary>
+    /// <param name="currentDomain">The current domain to set.</param>
+    /// <seealso cref="CurrentDomain"/>
+    public void SetCurrentDomain(CurrentDomain currentDomain)
+    {
+        using var ctxHandle = _ctx.Handle.Acquire();
+        using var handle = _handle.Acquire();
+        using var currentDomainHandle = currentDomain.Handle.Acquire();
+        _ctx.handle_error(Methods.tiledb_array_schema_set_current_domain(ctxHandle, handle, currentDomainHandle));
+    }
+
+    /// <summary>
     /// Sets the <see cref="ArraySchema"/>'s sparse fragment capacity.
     /// </summary>
     /// <param name="capacity">The capacity.</param>
@@ -372,6 +385,38 @@ public sealed unsafe class ArraySchema : IDisposable
         }
 
         return new Domain(_ctx, handle);
+    }
+
+    /// <summary>
+    /// Gets the <see cref="ArraySchema"/>'s <see cref="CSharp.CurrentDomain"/>.
+    /// </summary>
+    public CurrentDomain CurrentDomain()
+    {
+        var handle = new CurrentDomainHandle();
+        var successful = false;
+        tiledb_current_domain_handle_t* current_domain_p = null;
+        try
+        {
+            using (var ctxHandle = _ctx.Handle.Acquire())
+            using (var schemaHandle = _handle.Acquire())
+            {
+                _ctx.handle_error(Methods.tiledb_array_schema_get_current_domain(ctxHandle, schemaHandle, &current_domain_p));
+            }
+            successful = true;
+        }
+        finally
+        {
+            if (successful)
+            {
+                handle.InitHandle(current_domain_p);
+            }
+            else
+            {
+                handle.SetHandleAsInvalid();
+            }
+        }
+
+        return new CurrentDomain(_ctx, handle);
     }
 
     /// <summary>

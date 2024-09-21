@@ -807,6 +807,18 @@ public enum QueryFieldOrigin : uint
     Aggregate
 }
 
+/// <summary>
+/// Specifies the type of a <see cref="CurrentDomain"/>.
+/// </summary>
+public enum CurrentDomainType : uint
+{
+    /// <summary>
+    /// The current domain is an n-dimensional rectangle.
+    /// </summary>
+    /// <seealso cref="CSharp.NDRectangle"/>
+    NDRectangle = tiledb_current_domain_type_t.TILEDB_NDRECTANGLE
+}
+
 public static class Constants
 {
     /// <summary>
